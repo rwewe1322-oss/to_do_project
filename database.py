@@ -12,9 +12,13 @@ cursor.execute('''
 def add_task(title):
     conn = sqlite3.connect('todo.db')
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO tasks (title, completed) VALUES(?,?)',(title,0))
-    conn.commit()
-    conn.close()
+    if not title.strip():
+        return False
+    else:
+        cursor.execute('INSERT INTO tasks (title, completed) VALUES(?,?)',(title,0))
+        conn.commit()
+        conn.close()
+        return True
 def get_all_tasks():
     conn = sqlite3.connect('todo.db')
     cursor = conn.cursor()
@@ -28,9 +32,15 @@ conn.commit()
 def complete_tasks(task_id):
     conn = sqlite3.connect('todo.db')
     cursor = conn.cursor()
-    cursor.execute('UPDATE tasks SET completed = 1 WHERE id = ?',(task_id,))
-    conn.commit()
-    conn.close()
+    cursor.execute('SELECT * FROM tasks WHERE id = ?',(task_id,))
+    first = cursor.fetchone()
+    if first == None:
+        return False
+    else:
+        cursor.execute('UPDATE tasks SET completed = 1 WHERE id = ?',(task_id,))
+        conn.commit()
+        conn.close()
+        return True
 print(get_all_tasks())
 
 
