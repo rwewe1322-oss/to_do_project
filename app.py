@@ -18,13 +18,18 @@ def add():
         if title:
             add_task(title)
             return redirect('/')
-    return render_template('add_task.html')
-@app.route('/done/',methods=['GET', 'POST'])
+        return render_template('add_task.html'), 400
+    else:
+        return render_template('add_task.html')
+@app.route('/done/', methods=['GET','POST'])
 def done():
     if request.method == 'POST':
         task_id = request.form.get('task_id')
-        complete_tasks(int(task_id))
-        return redirect('/')
+        if task_id and task_id.isdigit():
+            complete_tasks(int(task_id))
+            return redirect('/')
+        else:
+            return render_template('done_task.html'), 400
     else:
         return render_template('done_task.html')
 if __name__ == '__main__':
